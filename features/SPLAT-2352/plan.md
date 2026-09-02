@@ -1,10 +1,15 @@
 # Configuring Additional etcd Disk for Azure
 
-**Test Plan Identifier:** SPLAT-2352-TP-001  
+**Test Plan Identifier:** SPLAT-2352-TP-001
+
 **Plan Status:** Draft  
+
 **Feature:** [SPLAT-2352](https://redhat.atlassian.net/browse/SPLAT-2352) — [GA] Configuring Additional etcd Disk for Azure  
+
 **Priority:** Critical  
+
 **Feature Status:** Planning; the feature has been reported as partially included in a 5.1 nightly, but is not yet considered GA.  
+
 **Primary Components:** OpenShift Installer, Machine API, Machine Config Operator, Azure platform, etcd  
 
 ## 1. Introduction
