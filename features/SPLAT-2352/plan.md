@@ -39,7 +39,7 @@ The plan also covers regression coverage for the shared multi-disk setup mechani
 ## 3. Test Items
 
 The following items are under test:
-[12:42 PM]- Azure install-config fields for additional data disks and disk setup.
+- Azure install-config fields for additional data disks and disk setup.
 - The MultiDiskSetup feature-gate path in the installer.
 - Generated Azure machine provider specifications, including disk name, size, LUN, caching, managed-disk type, and disk-encryption-set references where supported.
 - Generated MachineConfig and Ignition configuration for control-plane disk setup.
@@ -105,7 +105,7 @@ The shared disk setup path must retain coverage for:
 - disk labels and mount paths containing characters that require sanitization.
 
 ## 5. Features Not to Be Tested
-[12:42 PM]- Successful use of data-disk securityProfile.securityEncryptionType where the current scope explicitly rejects the configuration; full support is tracked separately under SPLAT-2897.
+Successful use of data-disk securityProfile.securityEncryptionType where the current scope explicitly rejects the configuration; full support is tracked separately under SPLAT-2897.
 - Successful data-disk provisioning on Azure Stack Hub when the expected behavior is explicit rejection.
 - Disk behavior on non-Azure platforms, except for regression checks proving that unrelated platforms are not changed.
 - Absolute performance or latency improvement targets, until product and QE owners define measurable thresholds.
@@ -159,55 +159,66 @@ Implement at least five e2e scenarios as required by SPLAT-2510:
 ### TP-01 — Feature gate disabled
 
 **Setup:** Use an otherwise valid Azure install configuration without enabling the multi-disk setup feature.  
+
 **Expected result:** The installer follows the baseline path and does not create disk-setup MachineConfigs unexpectedly.
 
 ### TP-02 — Dedicated etcd disk installation
 
 **Setup:** Enable the supported feature gates and configure one additional disk for each control-plane replica with diskSetup.type: etcd.  
+
 **Expected result:** Installation succeeds; every control-plane node has the configured disk, the disk is mounted at the intended etcd path, and etcd is healthy.
 
 ### TP-03 — Manifest-to-resource traceability
-[12:42 PM]**Setup:** Generate installation manifests from a valid etcd-disk configuration.  
+**Setup:** Generate installation manifests from a valid etcd-disk configuration.  
+
 **Expected result:** The configured disk name, size, LUN, caching, and managed-disk settings are represented consistently in the generated machine resources and the corresponding disk setup is linked by platformDiskID.
 
 ### TP-04 — MachineConfig and Ignition correctness
 
 **Setup:** Apply the generated MachineConfig to a test machine pool.  
+
 **Expected result:** The disk is partitioned, labeled, formatted as XFS, and mounted using the expected systemd unit; the MachineConfig becomes applied and the node returns to a healthy state.
 
 ### TP-05 — etcd persistence and reboot
 
 **Setup:** Run a healthy cluster with etcd on the additional disk, then reboot one control-plane node at a time.  
+
 **Expected result:** The disk remounts automatically, etcd data remains available, and cluster health is restored without loss of quorum.
 
 ### TP-06 — Multiple disk coexistence
 
 **Setup:** Configure an etcd disk on control-plane nodes and a user-defined disk on compute nodes, with distinct names and LUNs.  
+
 **Expected result:** Both disk classes are provisioned and configured independently; neither disk is mounted at the other disk's path.
 
 ### TP-07 — Managed-disk validation
 
 **Setup:** Configure managedDisk without the required storage-account type.  
+
 **Expected result:** The configuration is rejected with a clear validation error before successful cluster provisioning; no panic and no partially usable cluster are produced.
 
 ### TP-08 — Disk Encryption Set negative case
 
 **Setup:** Configure a Disk Encryption Set without the other required managed-disk fields.  
+
 **Expected result:** The installer returns an actionable validation error and does not panic during manifest generation.
 
 ### TP-09 — Unsupported disk security encryption
 
 **Setup:** Configure an unsupported data-disk security-encryption type.  
+
 **Expected result:** The installer rejects the configuration explicitly and does not silently omit the setting or provision a disk with different security semantics.
 
 ### TP-10 — Azure Stack Hub negative case
 
 **Setup:** Attempt the data-disk configuration on Azure Stack Hub.  
+
 **Expected result:** The installer rejects the unsupported combination with a clear error and documents the limitation.
 
 ### TP-11 — Upgrade with dedicated etcd disk
 
 **Setup:** Run the upgrade workflow with the dedicated etcd disk configuration.  
+
 **Expected result:** The upgrade completes, etcd remains healthy, the disk remains attached and mounted, and performance evidence is collected.
 
 ## 8. Item Pass/Fail Criteria
@@ -238,7 +249,7 @@ Resume only after the blocker is documented, the environment is healthy, and a b
 ## 10. Test Deliverables
 
 - This test plan in Markdown.
-[12:42 PM]- Installer unit and validation tests.
+- Installer unit and validation tests.
 - At least five Machine Config Operator e2e tests.
 - Azure installation e2e coverage for dedicated etcd storage.
 - Pre-merge, e2e, CI, and upgrade job definitions and execution results.
@@ -298,7 +309,7 @@ The exact OCP release versions, architectures, regions, VM types, and CI environ
 ## 16. Risks and Contingencies
 
 - **Feature maturity:** SPLAT-2352 is still in Planning and has only been reported as partially included in a nightly. Re-baseline the plan against the release payload used for each test run.
-- **Configuration drift:** Installer and Machine API field support may differ across payloads. Archive generated manifests and record the exact payload for every run.[12:42 PM]- **Disk ordering and LUN differences:** Azure VM types may expose different device paths. Validate by stable disk identity, LUN, and partition label rather than assuming a device name.
+- **Configuration drift:** Installer and Machine API field support may differ across payloads. Archive generated manifests and record the exact payload for every run.- **Disk ordering and LUN differences:** Azure VM types may expose different device paths. Validate by stable disk identity, LUN, and partition label rather than assuming a device name.
 - **MCO rollout impact:** Disk setup changes can temporarily make nodes unavailable. Test one control-plane node at a time and preserve quorum-health evidence.
 - **Encryption scope:** Unsupported security-encryption inputs must remain negative tests until the dedicated support work is complete.
 - **Azure capacity and permissions:** If the environment cannot provide the required VM or disk resources, mark the run blocked rather than treating it as a product pass.
